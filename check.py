@@ -2,9 +2,15 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-session = requests.session()
+
+with open('login_info.json') as file:
+    login_info = json.load(file)
+
 
 def get_course_page(url, login_creds):
+
+    session = requests.session()
+
     login_url = 'https://login.utexas.edu/login/UI/Login'
 
     request = session.post(login_url, data=login_creds)
@@ -33,14 +39,12 @@ def get_course_page(url, login_creds):
     return request
 
 
-with open('login_info.json') as file:
-    login_info = json.load(file)
+def get_course_status(course_id, semester_id=20189):
 
+    page = get_course_page(
+        'https://utdirect.utexas.edu/apps/registrar/course_schedule/{0}/{1}/'.format(semester_id, course_id),
+        login_info)
 
-page = get_course_page('https://utdirect.utexas.edu/apps/registrar/course_schedule/20189/16150/', login_info)
+    page_soup = BeautifulSoup(page.text, 'html.parser')
 
-page_soup = BeautifulSoup(page.text, 'html.parser')
-
-print(page_soup.find("td", {"data-th": "Status"}).string)
-
-
+    return page_soup.find("td", {"data-th": "Status"}).string
