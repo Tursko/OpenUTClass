@@ -1,0 +1,7 @@
+[Unit]
+Description=Every second checks status page of UT course pages
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/jspspike/OpenUTClass/main.py
+WorkingDirectory=/home/jspspike/OpenUTClass
